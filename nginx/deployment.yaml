@@ -32,7 +32,7 @@ spec:
         - name: varlog
           mountPath: /var/log/nginx
         - name: filebeat-config
-          mountPath: /etc/filebeat.yml
+          mountPath: /usr/share/filebeat/filebeat.yml
           subPath: filebeat.yml
         securityContext:
           runAsUser: 0
