@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+  namespace: default
+  labels:
+    app: nginx
+    purpose: helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+      purpose: helm
+  template:
+    metadata:
+      labels:
+        app: nginx
+        purpose: helm
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: varlog
+          mountPath: /var/log/nginx
+      - name: filebeat
+        image: docker.elastic.co/beats/filebeat:8.5.1
+        volumeMounts:
+        - name: varlog
+          mountPath: /var/log/nginx
+        - name: filebeat-config
+          mountPath: /etc/filebeat.yml
+          subPath: filebeat.yml
+        securityContext:
+          runAsUser: 0
+      volumes:
+      - name: varlog
+        emptyDir: {}
+      - name: filebeat-config
+        configMap:
+          name: filebeat
