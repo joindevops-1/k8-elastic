@@ -4,12 +4,18 @@ metadata:
   name: filebeat
 data:
   filebeat.yml: |
-    filebeat.inputs:
-    - type: log
-      paths:
-        - /var/log/nginx/*.log
-      fields:
-        service: nginx
+    filebeat:
+      config:
+        modules:
+          path: /usr/share/filebeat/modules.d/*.yml
+          reload:
+            enabled: true
+      modules:
+      - module: nginx
+        access:
+          var.paths: ["/var/log/nginx/access.log*"]
+        error:
+          var.paths: ["/var/log/nginx/error.log*"]
     output.elasticsearch:
       hosts: ['http://elasticsearch-master.elastic-stack.svc.cluster.local:9200']
       username: elastic
